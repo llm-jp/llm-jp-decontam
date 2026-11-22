@@ -5,9 +5,32 @@ description = "Lists the records of a dataset that share character or token n-gr
 requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.0",
-    "sentencepiece>=0.2.1",
+    "sentencepiece==0.2.1",
 ]
+
+[project.scripts]
+decontam-stats = "llm_jp_decontam.cli.stats:main"
+decontam-filter = "llm_jp_decontam.cli.filter:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.8",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = [
+    # Raised while sentencepiece (a SWIG extension) is imported on Python 3.13.
+    "ignore:builtin type .* has no __module__ attribute:DeprecationWarning",
+]
