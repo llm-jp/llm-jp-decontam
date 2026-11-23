@@ -51,6 +51,20 @@ uv run decontam-filter --data train.jsonl.gz --stats stats.char-n50-nfkc-lower-w
 
 `--ngram-size 50` と `--min-ref-coverage 0.5` は書き方の例で、推奨値ではありません。
 
+### 設定の例
+
+3 つの設定の例です。この 3 つの設定のどれについても、誤って取り除くレコードの割合と、取り除かれずに残る評価データの重なりの量を測った結果はありません。推奨値ではありません。
+
+| 例 | `decontam-stats` の設定 | `decontam-filter` の条件 |
+|---|---|---|
+| 1 | `--tokenizer spm --tokenizer-model MODEL --ngram-size 13 --normalize nfkc-lower-ws` | `--min-ref-coverage 0.3 --min-data-coverage 0.5 --short-texts` |
+| 2 | `--tokenizer spm --tokenizer-model MODEL --ngram-size 13 --normalize nfkc-lower-ws` | `--min-ref-coverage 0.5 --short-texts` |
+| 3 | `--tokenizer spm --tokenizer-model MODEL --ngram-size 20 --normalize nfkc-lower-ws` | `--min-ref-coverage 0.8 --short-texts` |
+
+`decontam-filter` の条件を複数指定すると、どれか 1 つに合うペアの `--data` 側のレコードを取り除きます（「取り除くレコード」の節）。
+
+MODEL には、SentencePiece のモデルファイルを指定します。たとえば、[llm-jp/llm-jp-tokenizer](https://github.com/llm-jp/llm-jp-tokenizer) を `git clone` したディレクトリの `models/ver4.0_alpha1.0/llm-jp-tokenizer_ver4.0_alpha1.0.model` です。
+
 ## 入力ファイル
 
 `--data` と `--ref` は同じ形式です。UTF-8 の JSON Lines（1 行に 1 つの JSON）を gzip で圧縮したファイルです。行は LF だけで区切ります。行末の CR と、どの行でも先頭にある BOM（U+FEFF）は無視します。gzip かどうかは拡張子ではなく中身で確かめ、gzip でなければエラーで終了します。gzip のファイルを `cat` でつないだものも読めます。
